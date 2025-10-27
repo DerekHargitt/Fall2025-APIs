@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!-- Derek Hargitt 10/26/2025 -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Dog Image Viewer</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Random Dog Image Viewer</h1>
+  <p>Select a dog breed and get a random image!</p>
+
+  <select id="breedSelect">
+    <option value="retriever/golden">Golden Retriever</option>
+    <option value="bulldog/english">English Bulldog</option>
+    <option value="beagle">Beagle</option>
+    <option value="husky">Husky</option>
+  </select>
+
+  <button id="fetchDogBtn">Get Random Dog</button>
+
+  <div id="dog-container">
+    <h2 id="breedName"></h2>
+    <img style="display:none;" id="dogImage" src="" alt="Random Dog Image">
+    <p id="dogURL"></p>
+  </div>
+
+  <script>
+    const breedSelect = document.getElementById('breedSelect');
+    const fetchDogBtn = document.getElementById('fetchDogBtn');
+    const dogImage = document.getElementById('dogImage');
+    const breedName = document.getElementById('breedName');
+    const dogURL = document.getElementById('dogURL');
+
+    //Fetch a dog image from the API by searching the selected breed
+    async function getDogImage() {
+      const breed = breedSelect.value;
+      const url = `https://dog.ceo/api/breed/${breed}/images/random`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        //Display three pieces of data dynamically
+        //console.log(data); //Only returns 2 pieces of data really
+        breedName.textContent = `API call status: ${data.status}\nBreed: ${breed.replace('/', ' ')}`;
+        dogImage.src = data.message;
+        dogImage.style.display = 'block';
+        dogURL.innerHTML = `Image URL: <a href="${data.message}" target="_blank">${data.message}</a>`;
+      } catch (error) {
+        breedName.textContent = 'Error fetching dog data.';
+        dogImage.src = '';
+        dogImage.style.display = 'none';
+        dogURL.textContent = '';
+        console.error('Error:', error);
+      }
+    }
+
+    //Trigger getDogImage when the button is clicked
+    fetchDogBtn.addEventListener('click', getDogImage);
+  </script>
+</body>
+</html>
